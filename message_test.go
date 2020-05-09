@@ -1,21 +1,17 @@
 package delay_msg
 
 import (
-	"github.com/yankewei/delay_msg/mine"
-	"reflect"
 	"testing"
+	"time"
 )
 
-func TestMessage(t *testing.T) {
-	object := new(mine.MyStruct)
-	m := AddItemToMessage(object, "Add", 1, 2)
-	inputs := make([]reflect.Value, 2)
-	inputs[0] = reflect.ValueOf(1)
-	inputs[1] = reflect.ValueOf(2)
-	ret := reflect.ValueOf(m.Object).MethodByName(m.Method).Call(inputs)
-	got := ret[0].Int()
-	want := 3
-	if got != int64(want) {
-		t.Errorf("want is %d, go is %d", want, got)
+func TestParseTime(t *testing.T) {
+	duration, _ := time.ParseDuration("10m")
+	cycles, seconds := ParseTime(duration)
+	if cycles != 0 {
+		t.Errorf("want cycles is 0, got %d", cycles)
+	}
+	if seconds != 600 {
+		t.Errorf("want seconds is 600s, go %ds", seconds)
 	}
 }
