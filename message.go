@@ -7,7 +7,7 @@ import (
 type Message struct {
 	Object interface{}
 	Method string
-	Args interface{}
+	Args   interface{}
 	Cycles int
 }
 
@@ -19,7 +19,7 @@ var m Message
  * delayTime time.Duration 要延迟多长时间执行
  * args 调用method所需要的参数
  */
-func AddItemToMessage (object interface{}, method string, delayTime time.Duration, args ...interface{}) Message {
+func AddItemToMessage(object interface{}, method string, delayTime time.Duration, args ...interface{}) Message {
 	m.Object = object
 	m.Method = method
 	m.Args = args
@@ -27,7 +27,7 @@ func AddItemToMessage (object interface{}, method string, delayTime time.Duratio
 	return m
 }
 
-func ParseTime (dalayTime time.Duration) (cycles, seconds int) {
+func ParseTime(dalayTime time.Duration) (cycles, seconds int) {
 	// 得到需要延迟多少秒执行
 	seconds = int(dalayTime.Seconds())
 	// 是否需要一小时后执行
