@@ -22,7 +22,7 @@ func TestParseTime(t *testing.T) {
 }
 
 func TestRing_AddMessage(t *testing.T) {
-	ring := Run()
+	ring := GetDelayMessageApp()
 	object := new(UniTest)
 	duration, _ := time.ParseDuration("10m")
 	ring.AddMessage(object, "returnHello", duration)

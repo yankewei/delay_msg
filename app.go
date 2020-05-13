@@ -1,6 +1,8 @@
 package delay_msg
 
 import (
+	"log"
+	"reflect"
 	"time"
 )
 
@@ -25,7 +27,7 @@ type MessageList struct {
 type Message struct {
 	Object interface{}
 	Method string
-	Args   interface{}
+	Args   []interface{}
 	Cycles int
 }
 
@@ -35,11 +37,12 @@ type Message struct {
  * AddMessage() 添加一条消息
  */
 
-func Run() *Ring {
-	// 初始化消息环
-	r := InitMessageRing()
-	// 开始执行
-	return r
+func (r *Ring) Run() {
+	ticker := time.NewTicker(time.Second)
+	for t := range ticker.C {
+		go Process(r.Ring[r.P], t)
+		r.P++
+	}
 }
 
 // 初始化消息环，默认3600个长度，后期可能会自定义
@@ -51,6 +54,11 @@ func InitMessageRing() *Ring {
 	}
 	r.P = 0
 	return r
+}
+
+// 返回一个延迟消息
+func GetDelayMessageApp() *Ring {
+	return InitMessageRing()
 }
 
 /**
@@ -85,3 +93,23 @@ func (r *Ring) AddMessage(object interface{}, method string, delayTime time.Dura
 	}
 }
 
+func Process(messageList *MessageList, t time.Time) {
+	if len(messageList.List) != 0 {
+		for _, m := range messageList.List {
+			if m.Cycles == 0 {
+				go execMessage(m, t)
+			} else {
+				m.Cycles--
+			}
+		}
+	}
+}
+
+func execMessage(m *Message, t time.Time) {
+	inputs := make([]reflect.Value, len(m.Args))
+	for i, v := range m.Args {
+		inputs[i] = reflect.ValueOf(v)
+	}
+	reflect.ValueOf(m.Object).MethodByName(m.Method).Call(inputs)
+	log.Println("execMessage: 时间:" + t.String())
+}
